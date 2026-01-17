@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Firebase Test App</title>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<h2>Firebase Connection Test</h2>
+
+<input type="text" id="messageInput" placeholder="Type something">
+<button onclick="sendMessage()">Send</button>
+
+<ul id="messagesList"></ul>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCu9OZGEl3lBSKPFYn7UKv69Z-taXknr-M",
+    authDomain: "kb-forex-signals-01.firebaseapp.com",
+    projectId: "kb-forex-signals-01",
+    storageBucket: "kb-forex-signals-01.firebasestorage.app",
+    messagingSenderId: "805773814609",
+    appId: "1:805773814609:web:4119b6cd8ad6d656474170"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  function sendMessage() {
+    const msg = document.getElementById("messageInput").value;
+    if (msg.trim() === "") return;
+
+    db.collection("messages").add({
+      text: msg,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    document.getElementById("messageInput").value = "";
+  }
+
+  db.collection("messages")
+    .orderBy("timestamp")
+    .onSnapshot(snapshot => {
+      const list = document.getElementById("messagesList");
+      list.innerHTML = "";
+      snapshot.forEach(doc => {
+        const li = document.createElement("li");
+        li.textContent = doc.data().text;
+        list.appendChild(li);
+      });
+    });
+</script>
+
+</body>
+  </html>
